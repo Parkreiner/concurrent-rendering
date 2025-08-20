@@ -25,16 +25,22 @@ const Layout: FC = () => {
       <nav>
         <ol className="flex flex-col gap-8 md:flex-row md:items-center md:justify-center">
           <li>
-            <NavLink to="/start">Start</NavLink>
+            <NavLink to="/vanilla">Vanilla</NavLink>
           </li>
           <li>
             <NavLink to="/memo-only">Memo-Only</NavLink>
           </li>
           <li>
-            <NavLink to="/defer-only">Defer-Only</NavLink>
+            <NavLink to="/transition-only">Transition-Only</NavLink>
           </li>
           <li>
-            <NavLink to="/defer-and-memo">Defer + Memo</NavLink>
+            <NavLink to="/transition-with-memo">Transition+Memo</NavLink>
+          </li>
+          <li>
+            <NavLink to="/defer-only">Defer-only</NavLink>
+          </li>
+          <li>
+            <NavLink to="/defer-with-memo">Defer+Memo</NavLink>
           </li>
         </ol>
       </nav>

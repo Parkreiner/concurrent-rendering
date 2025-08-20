@@ -1,12 +1,9 @@
 import { Button } from "~/dumping-ground/Button";
-import { Card } from "~/dumping-ground/Card";
 import { useForcePeriodicRefresh } from "~/dumping-ground/useForcePeriodicRerender";
-import {
-  filterResources,
-  useMockResources,
-} from "~/dumping-ground/mockResources";
+import { useMockResources } from "~/dumping-ground/mockResources";
 import { useState } from "react";
 import { DemoButton } from "~/dumping-ground/DemoButton";
+import { ResourceList } from "~/dumping-ground/ResourceList";
 
 export default function Start() {
   const forceRerenderState = useForcePeriodicRefresh(1000);
@@ -83,24 +80,11 @@ export default function Start() {
         <Button onClick={() => regenerateResources()}>Regenerate list</Button>
       </div>
 
-      <section>
-        <h2 className="sr-only">Resource List</h2>
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {filterResources(resources, query, isThrottled).map((r) => (
-            <li key={r.id}>
-              <Card
-                headerLevel="h3"
-                className="h-full"
-                displayName={r.displayName}
-                authorName={r.author}
-                description={r.description}
-                iconStyle={r.iconStyle}
-                tags={r.tags}
-              />
-            </li>
-          ))}
-        </ul>
-      </section>
+      <ResourceList
+        resources={resources}
+        query={query}
+        isThrottled={isThrottled}
+      />
     </section>
   );
 }

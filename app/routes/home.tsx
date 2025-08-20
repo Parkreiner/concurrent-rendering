@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export function loader() {
-  throw redirect("/start");
+  throw redirect("/vanilla");
 }
 
 const Home: FC = () => {

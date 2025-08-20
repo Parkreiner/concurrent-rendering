@@ -1,12 +1,13 @@
 import { Button } from "~/dumping-ground/Button";
 import { useForcePeriodicRefresh } from "~/dumping-ground/useForcePeriodicRerender";
 import { useMockResources } from "~/dumping-ground/mockResources";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { DemoButton } from "~/dumping-ground/DemoButton";
 import { MemoizedResourceList } from "~/dumping-ground/ResourceList";
 
-export default function MemoOnly() {
+export default function TransitionOnly() {
   const forceRerenderState = useForcePeriodicRefresh(1000);
+  const [isPending, startTransition] = useTransition();
   const [query, setQuery] = useState("");
   const {
     resources,
@@ -54,6 +55,10 @@ export default function MemoOnly() {
         </div>
 
         <DemoButton />
+
+        <p className="grow text-right text-xl">
+          Transition {isPending ? "Pending" : "Idle"}
+        </p>
       </div>
 
       <div className="flex flex-row items-end gap-6 rounded-md border border-neutral-800 px-6 py-4">
@@ -62,8 +67,12 @@ export default function MemoOnly() {
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
+            onChange={(e) => {
+              startTransition(() => {
+                setQuery(e.target.value);
+              });
+            }}
           />
         </label>
 
@@ -72,8 +81,12 @@ export default function MemoOnly() {
           <input
             type="number"
             value={resources.length}
-            onChange={(e) => onResourceSizeChange(e.target.valueAsNumber)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
+            onChange={(e) => {
+              startTransition(() => {
+                onResourceSizeChange(e.target.valueAsNumber);
+              });
+            }}
           />
         </label>
 

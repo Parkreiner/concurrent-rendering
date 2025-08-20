@@ -1,13 +1,14 @@
 import { Button } from "~/dumping-ground/Button";
 import { useForcePeriodicRefresh } from "~/dumping-ground/useForcePeriodicRerender";
 import { useMockResources } from "~/dumping-ground/mockResources";
-import { useState } from "react";
+import { useDeferredValue, useState } from "react";
 import { DemoButton } from "~/dumping-ground/DemoButton";
 import { MemoizedResourceList } from "~/dumping-ground/ResourceList";
 
-export default function MemoOnly() {
+export default function DeferOnly() {
   const forceRerenderState = useForcePeriodicRefresh(1000);
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
   const {
     resources,
     isThrottled,
@@ -15,6 +16,7 @@ export default function MemoOnly() {
     regenerateResources,
     onThrottleChange,
   } = useMockResources(25);
+  const isPending = query !== deferredQuery;
 
   return (
     <section className="flex flex-col gap-8">
@@ -54,6 +56,10 @@ export default function MemoOnly() {
         </div>
 
         <DemoButton />
+
+        <p className="grow text-right text-xl">
+          Deferred Render {isPending ? "Pending" : "Idle"}
+        </p>
       </div>
 
       <div className="flex flex-row items-end gap-6 rounded-md border border-neutral-800 px-6 py-4">
@@ -62,8 +68,8 @@ export default function MemoOnly() {
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
+            onChange={(e) => setQuery(e.target.value)}
           />
         </label>
 
@@ -72,8 +78,8 @@ export default function MemoOnly() {
           <input
             type="number"
             value={resources.length}
-            onChange={(e) => onResourceSizeChange(e.target.valueAsNumber)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
+            onChange={(e) => onResourceSizeChange(e.target.valueAsNumber)}
           />
         </label>
 
@@ -82,7 +88,7 @@ export default function MemoOnly() {
 
       <MemoizedResourceList
         resources={resources}
-        query={query}
+        query={deferredQuery}
         isThrottled={isThrottled}
       />
     </section>

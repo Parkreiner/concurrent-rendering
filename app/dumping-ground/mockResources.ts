@@ -45,19 +45,20 @@ const mockDescriptions: readonly string[] = [
 
 const mockTags: readonly string[] = [
   "red",
-  "blue",
-  "green",
-  "yellow",
   "orange",
+  "yellow",
+  "green",
+  "blue",
+  "indigo",
+  "violet",
   "pink",
-  "purple",
-  "burgundy",
-  "white pearl",
-  "chocolate",
-  "ivory",
-  "vermillion",
-  "fuchsia",
-  "dead (no, Suda51, this is not a color)",
+  "black",
+
+  "handsome gold",
+  "handsome purple",
+  "handsome light brown",
+  "handsome white pearl",
+  "handsome dead",
 ];
 
 function shuffleInPlace(input: unknown[]): void {
