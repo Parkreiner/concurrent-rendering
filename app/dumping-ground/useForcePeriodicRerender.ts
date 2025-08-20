@@ -1,37 +1,34 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type UseForcePeriodicRerenderResult = Readonly<{
-  isActive: boolean;
-  lastRenderIso: string | null;
+  lastRefresh: Date | null;
   toggleIsActive: () => void;
 }>;
 
-export function useForcePeriodicRerender(
+export function useForcePeriodicRefresh(
   refreshIntervalMs: number
 ): UseForcePeriodicRerenderResult {
-  const [lastRenderIso, setLastRenderIso] = useState("");
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [isActive, setIsActive] = useState(false);
 
-  const updateIso = useCallback(() => {
-    const newIso = new Date().toISOString();
-    setLastRenderIso(newIso);
+  const updateDate = useCallback(() => {
+    const newTime = new Date();
+    setLastRefresh(newTime);
   }, []);
 
   useEffect(() => {
     if (!isActive) {
       return;
     }
-
-    const intervalId = window.setInterval(updateIso, refreshIntervalMs);
+    const intervalId = window.setInterval(updateDate, refreshIntervalMs);
     return () => window.clearInterval(intervalId);
-  }, [updateIso, isActive, refreshIntervalMs]);
+  }, [updateDate, isActive, refreshIntervalMs]);
 
   return {
-    isActive,
-    lastRenderIso: isActive ? lastRenderIso : null,
+    lastRefresh: isActive ? lastRefresh : null,
     toggleIsActive: () => {
       setIsActive(!isActive);
-      updateIso();
+      updateDate();
     },
   };
 }

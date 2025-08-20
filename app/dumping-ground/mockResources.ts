@@ -88,7 +88,7 @@ function generateResources(size: number): readonly WebsiteResource[] {
 
     const newResource: WebsiteResource = {
       tags,
-      id: String(i),
+      id: crypto.randomUUID(),
       author: mockAuthors[Math.floor(rngBasis * mockAuthors.length)] ?? "",
       description: `A ${resourceType} that does the following: ${descriptionBase}`,
       displayName:
@@ -107,31 +107,39 @@ function generateResources(size: number): readonly WebsiteResource[] {
 // makes the performance problems more obvious for the demo
 export function filterResources<T extends WebsiteResource>(
   resources: readonly T[],
-  query: string
+  query: string,
+  artificiallyThrottle: boolean
 ): readonly T[] {
   if (resources.length === 0 || query.length === 0) {
     return resources;
   }
 
-  const terms = query.split(" ").map((term) => new RegExp(`\b${term}\b`, "i"));
-  console.log(terms);
-  const filtered = resources.filter((r) => {
+  const terms = query.split(" ").map((term) => new RegExp(term, "i"));
+  return resources.filter((r) => {
     const fieldsToCheck = [r.displayName, r.author, r.description, ...r.tags];
-    return terms.some((term) => {
+    const result = terms.every((term) => {
       return fieldsToCheck.some((f) => term.test(f));
     });
-  });
 
-  if (filtered.length === resources.length) {
-    return resources;
-  }
-  return filtered;
+    // Did a little too good job of simplifying the problem, so on a 2021 M1
+    // Mac, the UI can still zip through the filtering with no issue. Didn't
+    // want to bring in much more complexity for the demo, so I'm just
+    // introducing an artificial delay instead
+    if (artificiallyThrottle) {
+      const start = Date.now();
+      while (Date.now() - start < 25) {}
+    }
+    return result;
+  });
 }
 
 type UseMockResourcesResult = Readonly<{
   resources: readonly WebsiteResource[];
+  isThrottled: boolean;
+
   onResourceSizeChange: (newSize: number) => void;
   regenerateResources: () => void;
+  onThrottleChange: (newThrottleValue: boolean) => void;
 }>;
 
 // Normally we would want to add some debouncing for some of the core state
@@ -140,6 +148,7 @@ type UseMockResourcesResult = Readonly<{
 export function useMockResources(
   initialResourceCount: number
 ): UseMockResourcesResult {
+  const [isThrottled, setIsThrottled] = useState(false);
   const [resources, setResources] = useState<readonly WebsiteResource[]>([]);
 
   const generateNewResources = (count: number): void => {
@@ -160,8 +169,10 @@ export function useMockResources(
   }, []);
 
   return {
+    isThrottled,
     resources,
     regenerateResources: () => generateNewResources(resources.length),
+    onThrottleChange: (newValue) => setIsThrottled(newValue),
     onResourceSizeChange: (newSize) => {
       const noUpdatePossible =
         !Number.isInteger(newSize) ||

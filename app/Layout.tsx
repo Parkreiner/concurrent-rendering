@@ -34,7 +34,7 @@ const Layout: FC = () => {
             <NavLink to="/defer-only">Defer-Only</NavLink>
           </li>
           <li>
-            <NavLink to="/defer-and-memo">Defer with Memo</NavLink>
+            <NavLink to="/defer-and-memo">Defer + Memo</NavLink>
           </li>
         </ol>
       </nav>
