@@ -76,11 +76,10 @@ function generateResources(size: number): readonly WebsiteResource[] {
   }
 
   for (let i = 0; i < size; i++) {
-    const rngBasis = Math.random();
-
-    const resourceType = rngBasis < 0.5 ? "module" : "template";
+    const resourceType = Math.random() < 0.5 ? "module" : "template";
     const descriptionBase =
-      mockDescriptions[Math.floor(rngBasis * mockDescriptions.length)] ?? "";
+      mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)] ??
+      "";
 
     let tags: string[] = [...mockTags];
     shuffleInPlace(tags);
@@ -89,12 +88,13 @@ function generateResources(size: number): readonly WebsiteResource[] {
     const newResource: WebsiteResource = {
       tags,
       id: crypto.randomUUID(),
-      author: mockAuthors[Math.floor(rngBasis * mockAuthors.length)] ?? "",
+      author: mockAuthors[Math.floor(Math.random() * mockAuthors.length)] ?? "",
       description: `A ${resourceType} that does the following: ${descriptionBase}`,
       displayName:
-        mockDisplayNames[Math.floor(rngBasis * mockDisplayNames.length)] ?? "",
+        mockDisplayNames[Math.floor(Math.random() * mockDisplayNames.length)] ??
+        "",
       iconStyle:
-        iconStyles[Math.floor(rngBasis * iconStyles.length)] ?? "circle",
+        iconStyles[Math.floor(Math.random() * iconStyles.length)] ?? "circle",
     };
 
     resources.push(newResource);
@@ -127,7 +127,7 @@ export function filterResources<T extends WebsiteResource>(
     // introducing an artificial delay instead
     if (artificiallyThrottle) {
       const start = Date.now();
-      while (Date.now() - start < 25) {}
+      while (Date.now() - start < 2) {}
     }
     return result;
   });
