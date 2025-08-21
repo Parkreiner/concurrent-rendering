@@ -9,7 +9,7 @@ const iconStyles = [
 
 export type IconStyle = (typeof iconStyles)[number];
 
-export type WebsiteResource = Readonly<{
+export type CardData = Readonly<{
   id: string;
   author: string;
   displayName: string;
@@ -70,14 +70,14 @@ function shuffleInPlace(input: unknown[]): void {
   }
 }
 
-function generateResources(size: number): readonly WebsiteResource[] {
-  const resources: WebsiteResource[] = [];
+function generateCardData(size: number): readonly CardData[] {
+  const cards: CardData[] = [];
   if (!Number.isInteger(size) || size <= 0) {
-    return resources;
+    return cards;
   }
 
   for (let i = 0; i < size; i++) {
-    const resourceType = Math.random() < 0.5 ? "module" : "template";
+    const cardType = Math.random() < 0.5 ? "thingy" : "whatcha-ma-call-it";
     const descriptionBase =
       mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)] ??
       "";
@@ -86,11 +86,11 @@ function generateResources(size: number): readonly WebsiteResource[] {
     shuffleInPlace(tags);
     tags = tags.slice(0, 5);
 
-    const newResource: WebsiteResource = {
+    const newCard: CardData = {
       tags,
       id: crypto.randomUUID(),
       author: mockAuthors[Math.floor(Math.random() * mockAuthors.length)] ?? "",
-      description: `A ${resourceType} that does the following: ${descriptionBase}`,
+      description: `A ${cardType} that does the following: ${descriptionBase}`,
       displayName:
         mockDisplayNames[Math.floor(Math.random() * mockDisplayNames.length)] ??
         "",
@@ -98,25 +98,25 @@ function generateResources(size: number): readonly WebsiteResource[] {
         iconStyles[Math.floor(Math.random() * iconStyles.length)] ?? "circle",
     };
 
-    resources.push(newResource);
+    cards.push(newCard);
   }
 
-  return resources;
+  return cards;
 }
 
 // This is definitely inefficient. One, that made it easier to write. Two, that
 // makes the performance problems more obvious for the demo
-export function filterResources<T extends WebsiteResource>(
-  resources: readonly T[],
+export function filterCards<T extends CardData>(
+  cards: readonly T[],
   query: string,
   artificiallyThrottle: boolean
 ): readonly T[] {
-  if (resources.length === 0 || query.length === 0) {
-    return resources;
+  if (cards.length === 0 || query.length === 0) {
+    return cards;
   }
 
   const terms = query.split(" ").map((term) => new RegExp(term, "i"));
-  return resources.filter((r) => {
+  return cards.filter((r) => {
     const fieldsToCheck = [r.displayName, r.author, r.description, ...r.tags];
     const result = terms.every((term) => {
       return fieldsToCheck.some((f) => term.test(f));
@@ -134,40 +134,38 @@ export function filterResources<T extends WebsiteResource>(
   });
 }
 
-export function sliceResources(
-  resources: readonly WebsiteResource[],
+export function sliceCards(
+  cards: readonly CardData[],
   sliceCap: number
-): readonly WebsiteResource[] {
+): readonly CardData[] {
   const normalized = Math.trunc(sliceCap);
   if (!Number.isFinite(normalized) || normalized <= 0) {
-    return resources;
+    return cards;
   }
-  return resources.slice(0, normalized);
+  return cards.slice(0, normalized);
 }
 
-type UseMockResourcesResult = Readonly<{
-  resources: readonly WebsiteResource[];
-  onResourceSizeChange: (newSize: number) => void;
-  regenerateResources: () => void;
+type UseMockCardsResult = Readonly<{
+  cards: readonly CardData[];
+  onCardCountChange: (newSize: number) => void;
+  regenerateCards: () => void;
 }>;
 
 // Normally we would want to add some debouncing for some of the core state
 // transitions, but considering the topic of the talk, we actually want to lean
 // into the jank as much as humanly possible
-export function useMockResources(
-  initialResourceCount: number
-): UseMockResourcesResult {
-  const [resources, setResources] = useState<readonly WebsiteResource[]>([]);
+export function useMockCards(initialCardCount: number): UseMockCardsResult {
+  const [cards, setCards] = useState<readonly CardData[]>([]);
 
-  const generateNewResources = (count: number): void => {
-    const newResources = generateResources(count);
-    setResources(newResources);
+  const generateNewCards = (count: number): void => {
+    const newCards = generateCardData(count);
+    setCards(newCards);
   };
 
   // Not super happy with this, but this is a relatively painless way to avoid
   // hydration errors. Those are going to be super common with super-randomized
   // output
-  const onMount = () => generateNewResources(initialResourceCount);
+  const onMount = () => generateNewCards(initialCardCount);
   const onMountRef = useRef(onMount);
   useLayoutEffect(() => {
     onMountRef.current = onMount;
@@ -177,29 +175,27 @@ export function useMockResources(
   }, []);
 
   return {
-    resources,
-    regenerateResources: () => generateNewResources(resources.length),
-    onResourceSizeChange: (newSize) => {
+    cards: cards,
+    regenerateCards: () => generateNewCards(cards.length),
+    onCardCountChange: (newSize) => {
       const noUpdatePossible =
-        !Number.isInteger(newSize) ||
-        newSize < 0 ||
-        newSize === resources.length;
+        !Number.isInteger(newSize) || newSize < 0 || newSize === cards.length;
 
       if (noUpdatePossible) {
         return;
       }
 
       // A lot of the updates are going to try preserving the existing
-      // generated resources as much as possible, so there aren't any jarring
-      // UI jumps
-      if (newSize < resources.length) {
-        const shrunken = resources.slice(0, newSize);
-        setResources(shrunken);
+      // generated cards as much as possible, so there aren't any jarring UI
+      // jumps
+      if (newSize < cards.length) {
+        const shrunken = cards.slice(0, newSize);
+        setCards(shrunken);
         return;
       }
 
-      const diff = generateResources(newSize - resources.length);
-      setResources([...resources, ...diff]);
+      const diff = generateCardData(newSize - cards.length);
+      setCards([...cards, ...diff]);
     },
   };
 }

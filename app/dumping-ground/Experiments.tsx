@@ -2,8 +2,8 @@ import { useState, type FC, type ReactNode } from "react";
 import { Button } from "./Button";
 import { useForcePeriodicRefresh } from "./useForcePeriodicRerender";
 import { DemoToggleButton } from "./DemoToggleButton";
-import { MemoizedResourceList, ResourceList } from "./ResourceList";
-import type { WebsiteResource } from "./mockResources";
+import { MemoizedCardList, CardList } from "./CardList";
+import type { CardData } from "./mockCards";
 
 // Clunky props contract
 type ExperimentsProps = Readonly<{
@@ -14,14 +14,14 @@ type ExperimentsProps = Readonly<{
   query: string;
   onQueryChange: (newQuery: string) => void;
 
-  totalResources: number;
-  onTotalResourcesChange: (newTotal: number) => void;
+  totalCards: number;
+  onCardCountChange: (newTotal: number) => void;
 
   capCount: number;
   onCapCountChange: (newCount: number) => void;
 
-  resourcesToDisplay: readonly WebsiteResource[];
-  onResourceRegenerate: () => void;
+  cardsToDisplay: readonly CardData[];
+  onCardsRegeneration: () => void;
 }>;
 
 // Normally I wouldn't try to shoehorn six different pages into the exact same
@@ -33,16 +33,16 @@ export const Experiments: FC<ExperimentsProps> = ({
   title,
   query,
   memoizeList,
-  totalResources,
-  resourcesToDisplay,
+  totalCards: totalResources,
+  cardsToDisplay: resourcesToDisplay,
   capCount,
   additionalLabel,
   onQueryChange,
-  onResourceRegenerate,
-  onTotalResourcesChange,
+  onCardsRegeneration: onResourceRegenerate,
+  onCardCountChange: onTotalResourcesChange,
   onCapCountChange,
 }) => {
-  const ListComponent = memoizeList ? MemoizedResourceList : ResourceList;
+  const ListComponent = memoizeList ? MemoizedCardList : CardList;
   const forceRerenderState = useForcePeriodicRefresh(1000);
   const [isThrottled, setIsThrottled] = useState(false);
 
@@ -123,7 +123,7 @@ export const Experiments: FC<ExperimentsProps> = ({
       </div>
 
       <ListComponent
-        resources={resourcesToDisplay}
+        cards={resourcesToDisplay}
         query={query}
         isThrottled={isThrottled}
       />

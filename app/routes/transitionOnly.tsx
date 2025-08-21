@@ -1,19 +1,15 @@
-import {
-  sliceResources,
-  useMockResources,
-} from "~/dumping-ground/mockResources";
+import { sliceCards, useMockCards } from "~/dumping-ground/mockCards";
 import { useMemo, useState, useTransition } from "react";
 import { Experiments } from "~/dumping-ground/Experiments";
 
 export default function TransitionOnly() {
   const [query, setQuery] = useState("");
   const [capCount, setCapCount] = useState(0);
-  const { resources, onResourceSizeChange, regenerateResources } =
-    useMockResources(25);
+  const { cards, onCardCountChange, regenerateCards } = useMockCards(25);
 
-  const resourcesToDisplay = useMemo(
-    () => sliceResources(resources, capCount),
-    [resources, capCount]
+  const cardsToDisplay = useMemo(
+    () => sliceCards(cards, capCount),
+    [cards, capCount]
   );
 
   // This is new
@@ -25,10 +21,10 @@ export default function TransitionOnly() {
       memoizeList={false}
       query={query}
       capCount={capCount}
-      resourcesToDisplay={resourcesToDisplay}
+      cardsToDisplay={cardsToDisplay}
       onCapCountChange={setCapCount}
-      onResourceRegenerate={regenerateResources}
-      totalResources={resources.length}
+      onCardsRegeneration={regenerateCards}
+      totalCards={cards.length}
       // These now dispatch state updates via transitions; this is exactly the
       // kind of state that you DON'T want to use transitions for, but I think
       // they do a good job of showcasing the nuances of useTransition vs
@@ -38,9 +34,9 @@ export default function TransitionOnly() {
           setQuery(newQuery);
         });
       }}
-      onTotalResourcesChange={(newTotal) => {
+      onCardCountChange={(newTotal) => {
         startTransition(() => {
-          onResourceSizeChange(newTotal);
+          onCardCountChange(newTotal);
         });
       }}
       additionalLabel={<>Transition {isPending ? "Pending" : "Idle"}</>}

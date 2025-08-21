@@ -1,23 +1,19 @@
 import { memo, type FC } from "react";
-import { filterResources, type WebsiteResource } from "./mockResources";
+import { filterCards, type CardData } from "./mockCards";
 import { Card } from "./Card";
 
-type ResourceListProps = Readonly<{
-  resources: readonly WebsiteResource[];
+type CardListProps = Readonly<{
+  cards: readonly CardData[];
   query: string;
   isThrottled: boolean;
 }>;
 
-export const ResourceList: FC<ResourceListProps> = ({
-  resources,
-  query,
-  isThrottled,
-}) => {
+export const CardList: FC<CardListProps> = ({ cards, query, isThrottled }) => {
   return (
     <section>
-      <h2 className="sr-only">Resource List</h2>
+      <h2 className="sr-only">Card List</h2>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {filterResources(resources, query, isThrottled).map((r) => (
+        {filterCards(cards, query, isThrottled).map((r) => (
           <li key={r.id}>
             <Card
               headerLevel="h3"
@@ -35,6 +31,6 @@ export const ResourceList: FC<ResourceListProps> = ({
   );
 };
 
-export const MemoizedResourceList = memo<ResourceListProps>((props) => {
-  return <ResourceList {...props} />;
+export const MemoizedCardList = memo<CardListProps>((props) => {
+  return <CardList {...props} />;
 });

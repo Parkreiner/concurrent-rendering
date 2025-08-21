@@ -1,19 +1,15 @@
-import {
-  sliceResources,
-  useMockResources,
-} from "~/dumping-ground/mockResources";
+import { sliceCards, useMockCards } from "~/dumping-ground/mockCards";
 import { useDeferredValue, useMemo, useState } from "react";
 import { Experiments } from "~/dumping-ground/Experiments";
 
 export default function DeferOnly() {
   const [query, setQuery] = useState("");
   const [capCount, setCapCount] = useState(0);
-  const { resources, onResourceSizeChange, regenerateResources } =
-    useMockResources(25);
+  const { cards, onCardCountChange, regenerateCards } = useMockCards(25);
 
-  const resourcesToDisplay = useMemo(
-    () => sliceResources(resources, capCount),
-    [resources, capCount]
+  const cardsToDisplay = useMemo(
+    () => sliceCards(cards, capCount),
+    [cards, capCount]
   );
 
   const deferredQuery = useDeferredValue(query);
@@ -25,12 +21,12 @@ export default function DeferOnly() {
       memoizeList={true} // This is the only thing that changes from DeferOnly
       query={deferredQuery}
       capCount={capCount}
-      resourcesToDisplay={resourcesToDisplay}
+      cardsToDisplay={cardsToDisplay}
       onQueryChange={setQuery}
       onCapCountChange={setCapCount}
-      onResourceRegenerate={regenerateResources}
-      totalResources={resources.length}
-      onTotalResourcesChange={onResourceSizeChange}
+      onCardsRegeneration={regenerateCards}
+      totalCards={cards.length}
+      onCardCountChange={onCardCountChange}
       additionalLabel={
         <>Deferred Render {isDeferredRenderPending ? "Pending" : "Idle"}</>
       }

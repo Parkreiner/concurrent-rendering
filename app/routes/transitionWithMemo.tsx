@@ -1,19 +1,15 @@
-import {
-  sliceResources,
-  useMockResources,
-} from "~/dumping-ground/mockResources";
+import { sliceCards, useMockCards } from "~/dumping-ground/mockCards";
 import { useMemo, useState, useTransition } from "react";
 import { Experiments } from "~/dumping-ground/Experiments";
 
 export default function TransitionWithMemo() {
   const [query, setQuery] = useState("");
   const [capCount, setCapCount] = useState(0);
-  const { resources, onResourceSizeChange, regenerateResources } =
-    useMockResources(25);
+  const { cards, onCardCountChange, regenerateCards } = useMockCards(25);
 
   const resourcesToDisplay = useMemo(
-    () => sliceResources(resources, capCount),
-    [resources, capCount]
+    () => sliceCards(cards, capCount),
+    [cards, capCount]
   );
 
   const [isPending, startTransition] = useTransition();
@@ -24,18 +20,18 @@ export default function TransitionWithMemo() {
       memoizeList={true} // This is different
       query={query}
       capCount={capCount}
-      resourcesToDisplay={resourcesToDisplay}
+      cardsToDisplay={resourcesToDisplay}
       onCapCountChange={setCapCount}
-      onResourceRegenerate={regenerateResources}
-      totalResources={resources.length}
+      onCardsRegeneration={regenerateCards}
+      totalCards={cards.length}
       onQueryChange={(newQuery) => {
         startTransition(() => {
           setQuery(newQuery);
         });
       }}
-      onTotalResourcesChange={(newTotal) => {
+      onCardCountChange={(newTotal) => {
         startTransition(() => {
-          onResourceSizeChange(newTotal);
+          onCardCountChange(newTotal);
         });
       }}
       additionalLabel={<>Transition {isPending ? "Pending" : "Idle"}</>}

@@ -1,5 +1,5 @@
 import { useId, type FC } from "react";
-import type { IconStyle } from "./mockResources";
+import type { IconStyle } from "./mockCards";
 import { cn } from "./cn";
 
 type CardProps = Readonly<{
@@ -72,7 +72,7 @@ export const Card: FC<CardProps> = ({
 
       <div className="flex flex-col gap-2 pt-3">
         <div className="leading-none">
-          <span className="sr-only">This resource has the following tags:</span>
+          <span className="sr-only">This card has the following tags:</span>
           <span aria-hidden className="text-xs">
             Tags
           </span>
