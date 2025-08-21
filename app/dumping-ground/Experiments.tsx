@@ -14,14 +14,12 @@ type ExperimentsProps = Readonly<{
   query: string;
   onQueryChange: (newQuery: string) => void;
 
-  totalCards: number;
+  cards: readonly CardData[];
   onCardCountChange: (newTotal: number) => void;
+  onCardsRegeneration: () => void;
 
   capCount: number;
   onCapCountChange: (newCount: number) => void;
-
-  cardsToDisplay: readonly CardData[];
-  onCardsRegeneration: () => void;
 }>;
 
 // Normally I wouldn't try to shoehorn six different pages into the exact same
@@ -33,8 +31,7 @@ export const Experiments: FC<ExperimentsProps> = ({
   title,
   query,
   memoizeList,
-  totalCards,
-  cardsToDisplay,
+  cards,
   capCount,
   additionalLabel,
   onQueryChange,
@@ -106,7 +103,7 @@ export const Experiments: FC<ExperimentsProps> = ({
           <span>Total cards in memory</span>
           <input
             type="number"
-            value={totalCards}
+            value={cards.length}
             onChange={(e) => onCardCountChange(e.target.valueAsNumber)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
           />
@@ -126,8 +123,9 @@ export const Experiments: FC<ExperimentsProps> = ({
       </div>
 
       <ListComponent
-        cards={cardsToDisplay}
+        cards={cards}
         query={query}
+        capCount={capCount}
         isThrottled={isThrottled}
       />
     </section>
@@ -137,15 +135,24 @@ export const Experiments: FC<ExperimentsProps> = ({
 type CardListProps = Readonly<{
   cards: readonly CardData[];
   query: string;
+  capCount: number;
   isThrottled: boolean;
 }>;
 
-export const CardList: FC<CardListProps> = ({ cards, query, isThrottled }) => {
+export const CardList: FC<CardListProps> = ({
+  cards,
+  query,
+  capCount,
+  isThrottled,
+}) => {
+  const filtered = filterCards(cards, query, isThrottled);
+  const sliced = capCount === 0 ? filtered : filtered.slice(0, capCount);
+
   return (
     <section>
       <h2 className="sr-only">Card List</h2>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {filterCards(cards, query, isThrottled).map((r) => (
+        {sliced.map((r) => (
           <li key={r.id}>
             <Card
               headerLevel="h3"
