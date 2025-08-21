@@ -33,13 +33,13 @@ export const Experiments: FC<ExperimentsProps> = ({
   title,
   query,
   memoizeList,
-  totalCards: totalResources,
-  cardsToDisplay: resourcesToDisplay,
+  totalCards,
+  cardsToDisplay,
   capCount,
   additionalLabel,
   onQueryChange,
-  onCardsRegeneration: onResourceRegenerate,
-  onCardCountChange: onTotalResourcesChange,
+  onCardsRegeneration,
+  onCardCountChange,
   onCapCountChange,
 }) => {
   const ListComponent = memoizeList ? MemoizedCardList : CardList;
@@ -90,7 +90,7 @@ export const Experiments: FC<ExperimentsProps> = ({
 
       <div className="flex flex-row items-end gap-6 rounded-md border border-neutral-800 px-6 py-4">
         <label className="flex grow flex-col gap-2">
-          <span>Filter resources</span>
+          <span>Filter cards</span>
           <input
             type="text"
             value={query}
@@ -100,11 +100,11 @@ export const Experiments: FC<ExperimentsProps> = ({
         </label>
 
         <label className="flex grow flex-col gap-2">
-          <span>Total resources in memory</span>
+          <span>Total cards in memory</span>
           <input
             type="number"
-            value={totalResources}
-            onChange={(e) => onTotalResourcesChange(e.target.valueAsNumber)}
+            value={totalCards}
+            onChange={(e) => onCardCountChange(e.target.valueAsNumber)}
             className="rounded-md border border-neutral-500 px-4 py-1 text-xl"
           />
         </label>
@@ -119,11 +119,11 @@ export const Experiments: FC<ExperimentsProps> = ({
           />
         </label>
 
-        <Button onClick={onResourceRegenerate}>Regenerate list</Button>
+        <Button onClick={onCardsRegeneration}>Regenerate list</Button>
       </div>
 
       <ListComponent
-        cards={resourcesToDisplay}
+        cards={cardsToDisplay}
         query={query}
         isThrottled={isThrottled}
       />
