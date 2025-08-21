@@ -7,7 +7,7 @@ export default function TransitionWithMemo() {
   const [capCount, setCapCount] = useState(0);
   const { cards, onCardCountChange, regenerateCards } = useMockCards(25);
 
-  const resourcesToDisplay = useMemo(
+  const cardsToDisplay = useMemo(
     () => sliceCards(cards, capCount),
     [cards, capCount]
   );
@@ -20,7 +20,7 @@ export default function TransitionWithMemo() {
       memoizeList={true} // This is different
       query={query}
       capCount={capCount}
-      cardsToDisplay={resourcesToDisplay}
+      cardsToDisplay={cardsToDisplay}
       onCapCountChange={setCapCount}
       onCardsRegeneration={regenerateCards}
       totalCards={cards.length}
