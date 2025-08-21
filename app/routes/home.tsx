@@ -1,20 +1,8 @@
 import type { FC } from "react";
-import type { Route } from "./+types/home";
-import { redirect } from "react-router";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
-}
-
-export function loader() {
-  throw redirect("/vanilla");
-}
+import { Navigate } from "react-router";
 
 const Home: FC = () => {
-  return null;
+  return <Navigate to="/vanilla" />;
 };
 
 export default Home;

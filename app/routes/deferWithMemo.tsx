@@ -8,6 +8,7 @@ export default function DeferOnly() {
   const { cards, onCardCountChange, regenerateCards } = useMockCards(25);
 
   const deferredQuery = useDeferredValue(query);
+  console.log(query || "[empty]", deferredQuery || "[empty]");
   const isDeferredRenderPending = query !== deferredQuery;
 
   return (

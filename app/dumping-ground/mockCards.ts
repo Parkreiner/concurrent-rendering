@@ -116,22 +116,27 @@ export function filterCards<T extends CardData>(
   }
 
   const terms = query.split(" ").map((term) => new RegExp(term, "i"));
-  return cards.filter((r) => {
+  const result = cards.filter((r) => {
     const fieldsToCheck = [r.displayName, r.author, r.description, ...r.tags];
-    const result = terms.every((term) => {
+    return terms.every((term) => {
       return fieldsToCheck.some((f) => term.test(f));
     });
-
-    // Did a little too good job of simplifying the problem, so on a 2021 M1
-    // Mac, the UI can still zip through the filtering with no issue. Didn't
-    // want to bring in much more complexity for the demo, so I'm just
-    // introducing an artificial delay instead
-    if (artificiallyThrottle) {
-      const start = Date.now();
-      while (Date.now() - start < 2) {}
-    }
-    return result;
   });
+
+  // Did a little too good job of simplifying the problem, so on a 2021 M1 Mac,
+  // the UI can still zip through the filtering with no issue. Didn't want to
+  // bring in much more complexity for the demo, so I'm just introducing a small
+  // amount of extra work for each card instead
+  if (artificiallyThrottle) {
+    let dummyValue = 0;
+    for (let i = 0; i < cards.length; i++) {
+      for (let j = 0; j < 1_000_000; j++) {
+        dummyValue++;
+      }
+    }
+  }
+
+  return result;
 }
 
 export function sliceCards(

@@ -149,8 +149,9 @@ export const CardList: FC<CardListProps> = ({
   const sliced = capCount === 0 ? filtered : filtered.slice(0, capCount);
 
   return (
-    <section>
+    <section className="flex flex-col gap-2">
       <h2 className="sr-only">Card List</h2>
+      <p>{filtered.length} cards matched query</p>
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {sliced.map((r) => (
           <li key={r.id}>
@@ -170,16 +171,6 @@ export const CardList: FC<CardListProps> = ({
   );
 };
 
-export const MemoizedCardList = memo<CardListProps>(
-  (props) => {
-    return <CardList {...props} />;
-  },
-  (oldProps, newProps) => {
-    const skipUpdate =
-      oldProps.cards === newProps.cards &&
-      oldProps.isThrottled === newProps.isThrottled &&
-      oldProps.query === newProps.query;
-    console.log("skip", skipUpdate);
-    return skipUpdate;
-  }
-);
+export const MemoizedCardList = memo<CardListProps>((props) => {
+  return <CardList {...props} />;
+});
