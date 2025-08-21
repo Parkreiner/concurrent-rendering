@@ -81,7 +81,10 @@ export const Experiments: FC<ExperimentsProps> = ({
           </p>
         </div>
 
-        <DemoToggleButton />
+        <div className="flex flex-col gap-2">
+          <DemoToggleButton />
+          <p className="text-xl">(this is just a light)</p>
+        </div>
 
         {additionalLabel && (
           <p className="grow text-right text-xl">{additionalLabel}</p>

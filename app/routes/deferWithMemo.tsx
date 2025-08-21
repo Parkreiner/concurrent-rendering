@@ -17,7 +17,7 @@ export default function DeferOnly() {
 
   return (
     <Experiments
-      title="Defer Only"
+      title="Defer with Memo"
       memoizeList={true} // This is the only thing that changes from DeferOnly
       query={deferredQuery}
       capCount={capCount}

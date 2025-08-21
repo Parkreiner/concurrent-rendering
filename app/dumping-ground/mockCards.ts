@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 // There's no triangle because those are a pain to make in CSS
 const iconStyles = [
@@ -157,10 +157,12 @@ type UseMockCardsResult = Readonly<{
 export function useMockCards(initialCardCount: number): UseMockCardsResult {
   const [cards, setCards] = useState<readonly CardData[]>([]);
 
-  const generateNewCards = (count: number): void => {
+  // In production, all these useCallback calls would be overkill, but we need
+  // to minimize re-render causes as much as possible for the experiment
+  const generateNewCards = useCallback((count: number): void => {
     const newCards = generateCardData(count);
     setCards(newCards);
-  };
+  }, []);
 
   // Not super happy with this, but this is a relatively painless way to avoid
   // hydration errors. Those are going to be super common with super-randomized
@@ -174,15 +176,18 @@ export function useMockCards(initialCardCount: number): UseMockCardsResult {
     onMountRef.current();
   }, []);
 
-  return {
-    cards: cards,
-    regenerateCards: () => generateNewCards(cards.length),
-    onCardCountChange: (newSize) => {
+  // Can't use function update form to avoid dependency array entry because this
+  // state update isn't pure
+  const regenerateCards = useCallback((): void => {
+    generateNewCards(cards.length);
+  }, [cards.length]);
+
+  const onCardCountChange = useCallback((newSize: number): void => {
+    setCards((current) => {
       const noUpdatePossible =
         !Number.isInteger(newSize) || newSize < 0 || newSize === cards.length;
-
       if (noUpdatePossible) {
-        return;
+        return current;
       }
 
       // A lot of the updates are going to try preserving the existing
@@ -190,12 +195,13 @@ export function useMockCards(initialCardCount: number): UseMockCardsResult {
       // jumps
       if (newSize < cards.length) {
         const shrunken = cards.slice(0, newSize);
-        setCards(shrunken);
-        return;
+        return shrunken;
       }
 
       const diff = generateCardData(newSize - cards.length);
-      setCards([...cards, ...diff]);
-    },
-  };
+      return [...cards, ...diff];
+    });
+  }, []);
+
+  return { cards, regenerateCards, onCardCountChange };
 }

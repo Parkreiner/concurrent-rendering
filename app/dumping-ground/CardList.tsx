@@ -31,6 +31,16 @@ export const CardList: FC<CardListProps> = ({ cards, query, isThrottled }) => {
   );
 };
 
-export const MemoizedCardList = memo<CardListProps>((props) => {
-  return <CardList {...props} />;
-});
+export const MemoizedCardList = memo<CardListProps>(
+  (props) => {
+    return <CardList {...props} />;
+  },
+  (oldProps, newProps) => {
+    const skipUpdate =
+      oldProps.cards === newProps.cards &&
+      oldProps.isThrottled === newProps.isThrottled &&
+      oldProps.query === newProps.query;
+    console.log("skip", skipUpdate);
+    return skipUpdate;
+  }
+);

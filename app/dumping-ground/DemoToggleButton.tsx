@@ -20,7 +20,7 @@ export const DemoToggleButton: FC = () => {
           !isOn && "bg-neutral-950"
         )}
       />
-      Toggle me!
+      Toggle light
       <span className="sr-only"> (Switch is {isOn ? "on" : "off"})</span>
     </Button>
   );
