@@ -2,7 +2,11 @@ import { useState, type FC } from "react";
 import { Button } from "./Button";
 import { cn } from "./cn";
 
-export const DemoButton: FC = () => {
+// Split off into separate component, so that we have a new boundary to put
+// state, and have assurances that any renders for this button are kept as small
+// as possible. That way, it really sells how much things can break when a
+// pending render somewhere else breaks something as simple as this
+export const DemoToggleButton: FC = () => {
   const [isOn, setIsOn] = useState(false);
   return (
     <Button

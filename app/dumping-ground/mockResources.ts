@@ -134,13 +134,21 @@ export function filterResources<T extends WebsiteResource>(
   });
 }
 
+export function sliceResources(
+  resources: readonly WebsiteResource[],
+  sliceCap: number
+): readonly WebsiteResource[] {
+  const normalized = Math.trunc(sliceCap);
+  if (!Number.isFinite(normalized) || normalized <= 0) {
+    return resources;
+  }
+  return resources.slice(0, normalized);
+}
+
 type UseMockResourcesResult = Readonly<{
   resources: readonly WebsiteResource[];
-  isThrottled: boolean;
-
   onResourceSizeChange: (newSize: number) => void;
   regenerateResources: () => void;
-  onThrottleChange: (newThrottleValue: boolean) => void;
 }>;
 
 // Normally we would want to add some debouncing for some of the core state
@@ -149,7 +157,6 @@ type UseMockResourcesResult = Readonly<{
 export function useMockResources(
   initialResourceCount: number
 ): UseMockResourcesResult {
-  const [isThrottled, setIsThrottled] = useState(false);
   const [resources, setResources] = useState<readonly WebsiteResource[]>([]);
 
   const generateNewResources = (count: number): void => {
@@ -170,10 +177,8 @@ export function useMockResources(
   }, []);
 
   return {
-    isThrottled,
     resources,
     regenerateResources: () => generateNewResources(resources.length),
-    onThrottleChange: (newValue) => setIsThrottled(newValue),
     onResourceSizeChange: (newSize) => {
       const noUpdatePossible =
         !Number.isInteger(newSize) ||
