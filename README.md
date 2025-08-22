@@ -95,3 +95,18 @@ The good news is that the React team is aware of this problem, and is working on
 (Also, not to be mean, but you can ignore a lot of the statements made [in Kent C. Dodds's recent article on `useSyncExternalStore`](https://www.epicreact.dev/use-sync-external-store-demystified-for-practical-react-development-w5ac0). It most definitely does **_not_** work with concurrency – a bunch of library authors wishes that it did, but they're stuck waiting for a fix. And that "fix" basically means updating some parts of React's core architecture.)
 
 ## Bibliography
+
+### React Documentation
+
+- [useDeferredValue](https://react.dev/reference/react/useDeferredValue)
+- [useTransition](https://react.dev/reference/react/useTransition)
+- [startTransition](https://react.dev/reference/react/startTransition)
+
+## Blog Posts
+
+- [Vercel - How React 18 Improves Application Performance](https://vercel.com/blog/how-react-18-improves-application-performance)
+
+## Additional Reading
+
+- [Josh Comeau – 'Snappy UI Optimization with useDeferredValue'](https://www.joshwcomeau.com/react/use-deferred-value/)
+- [AceMarke - A Mostly(Mostly) Complete Guide to React Rendering Behavior](https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/)
